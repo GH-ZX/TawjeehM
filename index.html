@@ -8,6 +8,19 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231B2A41%22/><path d=%22M50 15 L65 50 L50 85 L35 50 Z%22 fill=%22%23C9A66B%22/></svg>">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: '#1B2A41',
+                        gold: '#C9A66B',
+                        crimson: '#A4243B',
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Font Awesome -->
@@ -33,6 +46,36 @@
             margin: 0;
             /* Prevent pull-to-refresh on mobile */
             overscroll-behavior-y: none;
+        }
+
+        /* Input Fields Fixes (CRITICAL) */
+        input, textarea {
+            color: white !important;
+            background-color: rgba(27, 42, 65, 0.6) !important; /* Dark background */
+            caret-color: var(--gold); /* Gold cursor */
+        }
+        
+        input:focus, textarea:focus {
+            background-color: rgba(27, 42, 65, 0.9) !important;
+            color: #ffffff !important;
+            border-color: var(--gold) !important;
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(201, 166, 107, 0.2);
+        }
+
+        /* Placeholder Color */
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Fix for Autofill (Chrome/Safari turns background white) */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px #1B2A41 inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
         }
 
         /* 3D Canvas Background */
