@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة بوصلة | Bawsala Platform</title>
+    <!-- Favicon: Simple Compass Logo -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231B2A41%22/><path d=%22M50 15 L65 50 L50 85 L35 50 Z%22 fill=%22%23C9A66B%22/></svg>">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Markdown Parser -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #1B2A41;
+            --grey: #7D8491;
+            --gold: #C9A66B;
+            --crimson: #A4243B;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--navy);
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* 3D Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #2c3e5a 0%, #1B2A41 100%);
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(27, 42, 65, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(201, 166, 107, 0.1); /* Gold tint border */
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(201, 166, 107, 0.2);
+        }
+
+        /* Typography & Utilities */
+        .text-gold { color: var(--gold); }
+        .text-crimson { color: var(--crimson); }
+        .bg-gold { background-color: var(--gold); }
+        .bg-navy { background-color: var(--navy); }
+        
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 2px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--navy); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--grey); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold); 
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: var(--navy);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        .compass-loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--grey);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* AI Chat Styles */
+        .ai-message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .ai-message.user {
+            background: rgba(201, 166, 107, 0.1); /* Gold tint */
+            border-right: 3px solid var(--gold);
+            margin-left: 2rem;
+        }
+        .ai-message.bot {
+            background: rgba(125, 132, 145, 0.1); /* Grey tint */
+            border-left: 3px solid var(--grey);
+            margin-right: 2rem;
+        }
+        .typing-indicator span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--gold);
+            border-radius: 50%;
+            animation: typing 1s infinite;
+            margin: 0 2px;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="flex flex-col items-center">
+            <div class="compass-loader mb-4"></div>
+            <p class="text-gold tracking-widest text-sm">جاري تهيئة النظام...</p>
+        </div>
+    </div>
+
+    <!-- 3D Background -->
+    <div id="canvas-container"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0 glass border-b-0 rounded-b-xl mx-auto max-w-7xl inset-x-0 mt-4 px-6 py-4 flex justify-between items-center transition-all duration-300">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-compass text-3xl text-gold"></i>
+            <div class="flex flex-col">
+                <span class="text-xl font-bold tracking-wide">بَوْصَلة</span>
+                <span class="text-[10px] text-gray-400 uppercase tracking-wider">BAWSALA PLATFORM</span>
+            </div>
+        </div>
+        <div class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+            <a href="#vision" class="hover:text-gold transition-colors">الرؤية</a>
+            <a href="#ai-hub" class="hover:text-gold transition-colors text-gold font-bold"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> الذكاء الاصطناعي</a>
+            <a href="#programs" class="hover:text-gold transition-colors">البرامج</a>
+            <a href="#team" class="hover:text-gold transition-colors">الفريق</a>
+        </div>
+        <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm">
+            تسجيل الدخول
+        </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-32 pb-20 px-4 md:px-0 max-w-7xl mx-auto space-y-32">
+
+        <!-- Hero Section -->
+        <header id="vision" class="min-h-[80vh] flex flex-col justify-center items-start text-right relative">
+            <div class="max-w-3xl animate-fade-in-up">
+                <div class="inline-block px-3 py-1 border border-gold/30 rounded-full bg-gold/10 text-gold text-xs mb-4 font-bold tracking-wider">
+                    إعلام عسكري بتوجيه حديث
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black mb-2 leading-tight">
+                    نحو <span class="text-transparent bg-clip-text bg-gradient-to-t from-gold to-white">الحقيقة</span>..
+                    <br>وعمق <span class="text-gold">الوعي</span>.
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300 mt-6 leading-relaxed max-w-2xl border-r-4 border-crimson pr-6">
+                    منصة "بوصلة" هي أداتك لتحديد الاتجاه الصحيح وسط ضبابية المعلومات. نحن لا نأمرك، بل نرشدك للحقيقة بأسلوب يحترم عقلك.
+                </p>
+                
+                <div class="mt-10 flex gap-4">
+                    <a href="#programs" class="glass px-8 py-4 rounded-lg font-bold text-white hover:bg-white/10 transition flex items-center gap-3 group">
+                        استكشف البرامج
+                        <i class="fa-solid fa-arrow-down group-hover:translate-y-1 transition-transform text-gold"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- AI HUB Section (New) -->
+        <section id="ai-hub" class="py-10">
+            <div class="flex items-center gap-3 mb-8">
+                <i class="fa-solid fa-microchip text-3xl text-gold"></i>
+                <h2 class="text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- AI Tool 1: The Advisor (Chat) -->
+                <div class="glass p-6 rounded-2xl col-span-1 lg:col-span-2 flex flex-col min-h-[500px]">
+                    <div class="border-b border-white/10 pb-4 mb-4 flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gold"><i class="fa-solid fa-user-graduate ml-2"></i> المستشار الذكي ✨</h3>
+                        <span class="text-xs bg-gold/20 text-gold px-2 py-1 rounded">Beta</span>
+                    </div>
+                    
+                    <!-- Chat Area -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 pr-2 custom-scrollbar">
+                        <div class="ai-message bot">
+                            مرحباً بك أيها البطل. أنا مستشارك الذكي في "بوصلة". يمكنك سؤالي عن التوجيه المعنوي، العقيدة العسكرية، أو كيفية التعامل مع الشائعات. كيف أخدمك اليوم؟
+                        </div>
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="relative">
+                        <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." 
+                            class="w-full bg-navy/50 border border-gray-600 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:border-gold transition text-white">
+                        <button onclick="sendChatMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gold hover:text-white transition">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column Tools -->
+                <div class="flex flex-col gap-6">
+                    
+                    <!-- AI Tool 2: Rumor Analyzer -->
+                    <div class="glass p-6 rounded-2xl flex-1">
+                        <h3 class="text-xl font-bold text-crimson mb-4"><i class="fa-solid fa-magnifying-glass-chart ml-2"></i> محلل المحتوى ✨</h3>
+                        <p class="text-xs text-gray-400 mb-4">أداة تابعة لبرنامج "حصن الجندي". الصق أي خبر لتحليله وكشف المغالطات.</p>
+                        <textarea id="rumor-input" rows="4" placeholder="الصق النص المشكوك فيه هنا..." class="w-full bg-navy/50 border border-gray-600 rounded-lg p-3 text-sm focus:border-crimson outline-none mb-3 text-white"></textarea>
+                        <button onclick="analyzeRumor()" class="w-full bg-crimson/80 hover:bg-crimson text-white py-2 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-shield-halved"></i> تحليل فوري
+                        </button>
+                        <div id="rumor-result" class="mt-4 text-sm text-gray-300 hidden p-3 bg-navy/30 rounded border border-gray-700"></div>
+                    </div>
+
+                    <!-- AI Tool 3: Content Generator -->
+                    <div class="glass p-6 rounded-2xl flex-1">
+                        <h3 class="text-xl font-bold text-teal-400 mb-4"><i class="fa-solid fa-lightbulb ml-2"></i> صانع الومضات ✨</h3>
+                        <p class="text-xs text-gray-400 mb-4">توليد رسائل تحفيزية لبرنامج "ومضات" بناءً على موضوع.</p>
+                        <input type="text" id="spark-topic" placeholder="الموضوع (مثلاً: الصبر، الانضباط)" class="w-full bg-navy/50 border border-gray-600 rounded-lg p-2 text-sm focus:border-teal-400 outline-none mb-3 text-white">
+                        <button onclick="generateSpark()" class="w-full bg-teal-600/80 hover:bg-teal-600 text-white py-2 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
+                            <i class="fa-solid fa-pen-nib"></i> توليد ومضة
+                        </button>
+                        <div id="spark-result" class="mt-4 text-sm text-gray-300 hidden p-3 bg-navy/30 rounded border border-gray-700 italic"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Identity Section -->
+        <section id="identity" class="py-10">
+            <h2 class="text-4xl font-bold mb-12 section-title">الهوية البصرية والتكتيكية</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+                <!-- Color Palette -->
+                <div class="glass p-8 rounded-2xl">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-palette text-gold"></i> لوحة الألوان
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#1B2A41] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg">كحلي عميق (Deep Navy)</h4>
+                                <p class="text-sm text-gray-400">يرمز للهيبة، الاحترافية، والعمق الاستراتيجي.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#7D8491] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg">رمادي تكتيكي (Tactical Grey)</h4>
+                                <p class="text-sm text-gray-400">لون محايد، تقني، ويرمز للمعدات الحديثة.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#C9A66B] shadow-lg group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gold">ذهبي مطفي (Matte Gold)</h4>
+                                <p class="text-sm text-gray-400">يرمز للرتب، القيمة المعنوية، والنصر.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#A4243B] shadow-lg group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg text-crimson">أحمر قرمزي (Crimson)</h4>
+                                <p class="text-sm text-gray-400">لنقاط التنبيه والتضحية.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo Concept -->
+                <div class="relative h-full min-h-[400px] flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gold/5 blur-3xl rounded-full"></div>
+                    <div class="glass p-10 rounded-full w-80 h-80 flex flex-col items-center justify-center text-center relative z-10 border-2 border-gold/20">
+                        <i class="fa-solid fa-compass text-8xl text-gold mb-4 animate-pulse"></i>
+                        <h3 class="text-3xl font-black tracking-wider">بَوْصَلة</h3>
+                        <p class="text-xs tracking-[0.3em] mt-2 text-gray-400">BAWSALA</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Programs Section (The Core) -->
+        <section id="programs">
+            <div class="text-center mb-16">
+                <span class="text-gold uppercase tracking-widest text-sm font-bold">استراتيجية المحتوى</span>
+                <h2 class="text-5xl font-bold mt-2 mb-4">البرامج المعتمدة</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">توزيع المحتوى لخدمة أهداف التوجيه المعنوي بقوالب فنية عصرية تواكب الإعلام الرقمي.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Program 1 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-gold border border-gold/20">
+                        <i class="fa-solid fa-bolt text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">ومضات معنوية</h3>
+                    <p class="text-sm text-gold/80 mb-4 font-mono">Reels / Shorts</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        جرعات مكثفة وسريعة (أقل من 60 ثانية) تحفز الهمم وترفع الروح القتالية. بديل عصري للمحاضرات الطويلة.
+                    </p>
+                </div>
+
+                <!-- Program 2 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-crimson opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-crimson border border-crimson/20">
+                        <i class="fa-solid fa-shield-halved text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">حصن الجندي</h3>
+                    <p class="text-sm text-crimson/80 mb-4 font-mono">Explainer Video</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        البرنامج الفكري "العميق". يناقش الشبهات، يفكك الحرب النفسية، ويحمي عقل الجندي من التيارات المنحرفة.
+                    </p>
+                </div>
+
+                <!-- Program 3 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-teal-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-teal-400 border border-teal-400/20">
+                        <i class="fa-solid fa-mosque text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">نور الثكنات</h3>
+                    <p class="text-sm text-teal-400/80 mb-4 font-mono">Cinematic / Spiritual</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        الجانب الروحي الهادئ. تصوير سينمائي داخل المصليات يركز على الطمأنينة والصبر، كاستراحة محارب للنفس.
+                    </p>
+                </div>
+
+                <!-- Program 4 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-indigo-400 border border-indigo-400/20">
+                        <i class="fa-solid fa-book-open text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">فقه الجندي</h3>
+                    <p class="text-sm text-indigo-400/80 mb-4 font-mono">Motion Graphics</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        تبسيط الأحكام الفقهية الميدانية (الصلاة في الخوف، الطهارة) بأسلوب بصري جذاب وسهل الفهم.
+                    </p>
+                </div>
+
+                <!-- Program 5 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-orange-400 border border-orange-400/20">
+                        <i class="fa-solid fa-binoculars text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">تأملات من الميدان</h3>
+                    <p class="text-sm text-orange-400/80 mb-4 font-mono">Documentary</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        نقل الصورة الحية. قصص بطولية ومشاهد تدريب احترافية بجودة عالية، لتعزيز الفخر والانتماء.
+                    </p>
+                </div>
+
+                <!-- Program 6 -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-white border border-white/20">
+                        <i class="fa-solid fa-user-shield text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">رسالة القائد</h3>
+                    <p class="text-sm text-gray-400 mb-4 font-mono">Direct Speech</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        كلمة مباشرة وتوجيهية. يتم تصويرها في الميدان لتعزيز الثقة والترابط بين القيادة والجنود.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Structure -->
+        <section id="team" class="py-10">
+            <h2 class="text-4xl font-bold mb-12 section-title">الهيكل التنفيذي</h2>
+            <div class="glass p-8 rounded-3xl flex flex-wrap justify-center gap-8 text-center">
+                
+                <div class="flex flex-col items-center gap-2 w-32">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-yellow-700 flex items-center justify-center shadow-lg mb-2">
+                        <i class="fa-solid fa-crown text-white text-xl"></i>
+                    </div>
+                    <p class="font-bold text-sm">مسؤول القسم</p>
+                    <p class="text-xs text-gray-400">الإشراف العام</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 w-32">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                        <i class="fa-solid fa-pen-nib text-white text-xl"></i>
+                    </div>
+                    <p class="font-bold text-sm">كتّاب محتوى</p>
+                    <p class="text-xs text-gray-400">شرعي + سيناريو</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 w-32">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                        <i class="fa-solid fa-film text-white text-xl"></i>
+                    </div>
+                    <p class="font-bold text-sm">مونتير (2)</p>
+                    <p class="text-xs text-gray-400">تحرير الفيديو</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 w-32">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                        <i class="fa-solid fa-bezier-curve text-white text-xl"></i>
+                    </div>
+                    <p class="font-bold text-sm">جرافيك (2)</p>
+                    <p class="text-xs text-gray-400">تصميم وموشن</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-2 w-32">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
+                        <i class="fa-solid fa-camera text-white text-xl"></i>
+                    </div>
+                    <p class="font-bold text-sm">مصورين (5)</p>
+                    <p class="text-xs text-gray-400">تغطية ميدانية</p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8">
+            <p class="mb-2">جميع الحقوق محفوظة © 2024 منصة بوصلة - التوجيه المعنوي</p>
+            <p class="text-xs">نحو الحقيقة.. وعمق الوعي</p>
+        </footer>
+
+    </main>
+
+    <!-- Script for 3D Background & Logic -->
+    <script>
+        // --- Gemini API Logic ---
+        const apiKey = ""; // API Key provided by environment
+
+        // Helper function for API calls
+        async function callGemini(prompt, systemInstruction = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في معالجة طلبك.";
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                return "عذراً، الخدمة غير متاحة حالياً.";
+            }
+        }
+
+        // 1. Chat Logic
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const messagesDiv = document.getElementById('chat-messages');
+            const userText = input.value.trim();
+            if (!userText) return;
+
+            // Add User Message
+            messagesDiv.innerHTML += `<div class="ai-message user">${userText}</div>`;
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // Add Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            messagesDiv.innerHTML += `
+                <div id="${loadingId}" class="ai-message bot typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            `;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+            // System Prompt for "The Guide"
+            const systemPrompt = `
+                أنت "المستشار الذكي" لمنصة "بوصلة" العسكرية التوعوية.
+                شخصيتك: ضابط مثقف، حكيم، هادئ، ومتزن.
+                مهمتك: الإجابة على أسئلة الجنود والضباط بخصوص التوجيه المعنوي، القيم العسكرية، الانضباط، والتعامل مع الشائعات.
+                أسلوبك: استخدم لغة عربية فصحى قوية ولكن مفهومة. كن مختصراً ومباشراً. ادعم إجاباتك بقيم الشجاعة والولاء.
+                تنسيق: استخدم Markdown لتنسيق النص (نقاط، عريض).
+            `;
+
+            // Call API
+            const aiResponse = await callGemini(userText, systemPrompt);
+
+            // Remove Loading & Add Response
+            document.getElementById(loadingId).remove();
+            messagesDiv.innerHTML += `<div class="ai-message bot">${marked.parse(aiResponse)}</div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Enter key to send
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+
+
+        // 2. Rumor Analyzer Logic
+        async function analyzeRumor() {
+            const input = document.getElementById('rumor-input').value.trim();
+            const resultDiv = document.getElementById('rumor-result');
+            const btn = document.querySelector('button[onclick="analyzeRumor()"]');
+            
+            if (!input) return;
+
+            // UI Loading State
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التحليل...';
+            btn.disabled = true;
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = "جاري الاتصال بقاعدة البيانات التحليلية...";
+
+            const systemPrompt = `
+                أنت خبير في الحرب النفسية وتحليل الدعاية لمنصة "بوصلة".
+                مهمتك: تحليل النص المقدم (شائعة أو خبر) وتفكيكه.
+                خطوات التحليل:
+                1. حدد "الهدف" من هذا النص (تخويف، إحباط، فتنة).
+                2. حدد "المغالطات المنطقية" أو "أساليب التلاعب" (تعميم، استمالة عاطفية، عدم وجود مصدر).
+                3. قدم "الترياق" (نصيحة للجندي كيف يتعامل معه).
+                الإجابة يجب أن تكون منظمة جداً وقصيرة.
+            `;
+
+            const aiResponse = await callGemini(input, systemPrompt);
+
+            resultDiv.innerHTML = marked.parse(aiResponse);
+            btn.innerHTML = originalBtnText;
+            btn.disabled = false;
+        }
+
+
+        // 3. Spark Generator Logic
+        async function generateSpark() {
+            const topic = document.getElementById('spark-topic').value.trim();
+            const resultDiv = document.getElementById('spark-result');
+            const btn = document.querySelector('button[onclick="generateSpark()"]');
+            
+            if (!topic) return;
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التوليد...';
+            btn.disabled = true;
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerHTML = "جاري صياغة الومضة...";
+
+            const systemPrompt = `
+                أنت كاتب محتوى مبدع في قسم التوجيه المعنوي.
+                مهمتك: كتابة "ومضة معنوية" (رسالة قصيرة جداً وملهمة) عن الموضوع الذي سيطلبه المستخدم.
+                الشروط: لا تزيد عن 30 كلمة. يجب أن تكون قوية، حماسية، وتصلح كرسالة SMS أو منشور سريع.
+                أضف هاشتاجات مناسبة في النهاية.
+            `;
+
+            const aiResponse = await callGemini(topic, systemPrompt);
+
+            resultDiv.innerHTML = marked.parse(aiResponse);
+            btn.innerHTML = '<i class="fa-solid fa-pen-nib"></i> توليد ومضة';
+            btn.disabled = false;
+        }
+
+        // --- Standard UI Logic ---
+
+        // Remove Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // THREE.JS SETUP
+        const container = document.getElementById('canvas-container');
+        
+        const scene = new THREE.Scene();
+        // Add subtle fog for depth
+        scene.fog = new THREE.FogExp2(0x1B2A41, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // CREATE THE "COMPASS" 3D OBJECT
+        const compassGroup = new THREE.Group();
+
+        // Material for the rings (Metallic Gold/Grey mix)
+        const ringMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x7D8491, 
+            metalness: 0.8, 
+            roughness: 0.2,
+            wireframe: false,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const goldMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xC9A66B, 
+            metalness: 1, 
+            roughness: 0.1,
+            emissive: 0xC9A66B,
+            emissiveIntensity: 0.2
+        });
+
+        // Outer Ring
+        const geometry1 = new THREE.TorusGeometry(10, 0.1, 16, 100);
+        const ring1 = new THREE.Mesh(geometry1, ringMaterial);
+        compassGroup.add(ring1);
+
+        // Middle Ring
+        const geometry2 = new THREE.TorusGeometry(8, 0.15, 16, 100);
+        const ring2 = new THREE.Mesh(geometry2, ringMaterial);
+        ring2.rotation.x = Math.PI / 2;
+        compassGroup.add(ring2);
+
+        // Inner Ring
+        const geometry3 = new THREE.TorusGeometry(6, 0.2, 16, 100);
+        const ring3 = new THREE.Mesh(geometry3, goldMaterial); // Gold core
+        compassGroup.add(ring3);
+
+        // Central "Pointer" (Pyramid)
+        const pointerGeo = new THREE.ConeGeometry(1, 4, 4);
+        const pointer = new THREE.Mesh(pointerGeo, goldMaterial);
+        pointer.rotation.x = Math.PI / 2;
+        compassGroup.add(pointer);
+
+        // Particles (Digital Data Dust)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 50; // Spread
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.05,
+            color: 0xC9A66B,
+            transparent: true,
+            opacity: 0.8,
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        scene.add(compassGroup);
+
+        // Position the compass
+        compassGroup.position.set(5, 0, -10); // Offset to right
+        if (window.innerWidth < 768) {
+            compassGroup.position.set(0, 0, -15); // Center on mobile
+        }
+
+        // LIGHTING
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xC9A66B, 2);
+        pointLight.position.set(10, 10, 10);
+        scene.add(pointLight);
+
+        const blueLight = new THREE.PointLight(0x1B2A41, 2);
+        blueLight.position.set(-10, -10, 5);
+        scene.add(blueLight);
+
+        camera.position.z = 5;
+
+        // ANIMATION LOOP
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            // Rotate rings continuously
+            ring1.rotation.y += 0.002;
+            ring1.rotation.x += 0.001;
+            
+            ring2.rotation.x += 0.003;
+            ring2.rotation.z += 0.001;
+
+            ring3.rotation.y -= 0.005;
+            ring3.rotation.x -= 0.002;
+
+            // Pointer floats
+            pointer.position.y = Math.sin(elapsedTime) * 0.5;
+            pointer.rotation.z += 0.01;
+
+            // Entire group reacts to mouse (parallax)
+            compassGroup.rotation.y += 0.05 * (targetX - compassGroup.rotation.y);
+            compassGroup.rotation.x += 0.05 * (targetY - compassGroup.rotation.x);
+
+            // Particles slow rotation
+            particlesMesh.rotation.y = elapsedTime * 0.05;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Responsive Resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            if (window.innerWidth < 768) {
+                compassGroup.position.set(0, 2, -15);
+            } else {
+                compassGroup.position.set(5, 0, -10);
+            }
+        });
+
+    </script>
+</body>
+</html>
