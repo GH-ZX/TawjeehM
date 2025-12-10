@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>منصة بوصلة | Bawsala Platform</title>
     <!-- Favicon: Simple Compass Logo -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231B2A41%22/><path d=%22M50 15 L65 50 L50 85 L35 50 Z%22 fill=%22%23C9A66B%22/></svg>">
@@ -31,6 +31,8 @@
             color: white;
             overflow-x: hidden;
             margin: 0;
+            /* Prevent pull-to-refresh on mobile */
+            overscroll-behavior-y: none;
         }
 
         /* 3D Canvas Background */
@@ -163,6 +165,27 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
+
+        /* Mobile Input Fixes */
+        @media screen and (max-width: 768px) {
+            input[type="text"], 
+            input[type="email"], 
+            textarea {
+                font-size: 16px !important; /* Prevents iOS Zoom */
+                transform: scale(1);
+            }
+            
+            /* Ensure nav doesn't take too much space on mobile */
+            nav {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+            
+            /* Add padding to bottom of AI chat so keyboard doesn't hide last message */
+            #chat-messages {
+                padding-bottom: 100px;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -184,7 +207,7 @@
             <i class="fa-solid fa-compass text-3xl text-gold"></i>
             <div class="flex flex-col">
                 <span class="text-xl font-bold tracking-wide">بَوْصَلة</span>
-                <span class="text-[10px] text-gray-400 uppercase tracking-wider">BAWSALA PLATFORM</span>
+                <span class="text-[10px] text-gray-400 uppercase tracking-wider hidden md:block">BAWSALA PLATFORM</span>
             </div>
         </div>
         <div class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
@@ -193,9 +216,11 @@
             <a href="#programs" class="hover:text-gold transition-colors">البرامج</a>
             <a href="#team" class="hover:text-gold transition-colors">الفريق</a>
         </div>
-        <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm">
-            تسجيل الدخول
-        </button>
+        <div class="flex gap-3">
+            <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm hidden sm:block">
+                تسجيل الدخول
+            </button>
+        </div>
     </nav>
 
     <!-- Main Content -->
@@ -207,11 +232,11 @@
                 <div class="inline-block px-3 py-1 border border-gold/30 rounded-full bg-gold/10 text-gold text-xs mb-4 font-bold tracking-wider">
                     إعلام عسكري بتوجيه حديث
                 </div>
-                <h1 class="text-6xl md:text-8xl font-black mb-2 leading-tight">
+                <h1 class="text-5xl md:text-8xl font-black mb-2 leading-tight">
                     نحو <span class="text-transparent bg-clip-text bg-gradient-to-t from-gold to-white">الحقيقة</span>..
                     <br>وعمق <span class="text-gold">الوعي</span>.
                 </h1>
-                <p class="text-xl md:text-2xl text-gray-300 mt-6 leading-relaxed max-w-2xl border-r-4 border-crimson pr-6">
+                <p class="text-lg md:text-2xl text-gray-300 mt-6 leading-relaxed max-w-2xl border-r-4 border-crimson pr-6">
                     منصة "بوصلة" هي أداتك لتحديد الاتجاه الصحيح وسط ضبابية المعلومات. نحن لا نأمرك، بل نرشدك للحقيقة بأسلوب يحترم عقلك.
                 </p>
                 
@@ -225,16 +250,16 @@
         </header>
 
         <!-- AI HUB Section (New) -->
-        <section id="ai-hub" class="py-10">
+        <section id="ai-hub" class="py-10 scroll-mt-24">
             <div class="flex items-center gap-3 mb-8">
                 <i class="fa-solid fa-microchip text-3xl text-gold"></i>
-                <h2 class="text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
+                <h2 class="text-3xl md:text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 <!-- AI Tool 1: The Advisor (Chat) -->
-                <div class="glass p-6 rounded-2xl col-span-1 lg:col-span-2 flex flex-col min-h-[500px]">
+                <div class="glass p-6 rounded-2xl col-span-1 lg:col-span-2 flex flex-col h-[500px]">
                     <div class="border-b border-white/10 pb-4 mb-4 flex justify-between items-center">
                         <h3 class="text-xl font-bold text-gold"><i class="fa-solid fa-user-graduate ml-2"></i> المستشار الذكي ✨</h3>
                         <span class="text-xs bg-gold/20 text-gold px-2 py-1 rounded">Beta</span>
@@ -251,7 +276,7 @@
                     <div class="relative">
                         <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." 
                             class="w-full bg-navy/50 border border-gray-600 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:border-gold transition text-white">
-                        <button onclick="sendChatMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gold hover:text-white transition">
+                        <button onclick="sendChatMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gold hover:text-white transition p-2">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -344,7 +369,7 @@
         <section id="programs">
             <div class="text-center mb-16">
                 <span class="text-gold uppercase tracking-widest text-sm font-bold">استراتيجية المحتوى</span>
-                <h2 class="text-5xl font-bold mt-2 mb-4">البرامج المعتمدة</h2>
+                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">البرامج المعتمدة</h2>
                 <p class="text-gray-400 max-w-2xl mx-auto">توزيع المحتوى لخدمة أهداف التوجيه المعنوي بقوالب فنية عصرية تواكب الإعلام الرقمي.</p>
             </div>
 
@@ -478,7 +503,7 @@
             </div>
         </section>
 
-        <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8">
+        <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8 pb-10">
             <p class="mb-2">جميع الحقوق محفوظة © 2024 منصة بوصلة - التوجيه المعنوي</p>
             <p class="text-xs">نحو الحقيقة.. وعمق الوعي</p>
         </footer>
@@ -487,8 +512,9 @@
 
     <!-- Script for 3D Background & Logic -->
     <script>
-        // --- Gemini API Logic ---
-        const apiKey = ""; // API Key provided by environment
+        // --- API KEY CONFIGURATION ---
+        // تنبيه: هذا المفتاح سيظهر لأي شخص يرى كود الموقع. تأكد من تأمين حسابك في Google Console
+        const apiKey = "AIzaSyC8vun5VBW9SNmDyeAgmLxFohmj6V7HZ9M";
 
         // Helper function for API calls
         async function callGemini(prompt, systemInstruction = "") {
@@ -505,15 +531,29 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في معالجة طلبك.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من فهم الرد.";
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                return "عذراً، الخدمة غير متاحة حالياً.";
+                return "عذراً، حدث خطأ في الاتصال بالخدمة. تأكد من اتصالك بالإنترنت وصلاحية مفتاح API.";
             }
         }
+
+        // --- MOBILE INPUT HANDLING ---
+        // Fix for keyboard hiding input on mobile
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        });
+
 
         // 1. Chat Logic
         async function sendChatMessage() {
@@ -549,7 +589,9 @@
             const aiResponse = await callGemini(userText, systemPrompt);
 
             // Remove Loading & Add Response
-            document.getElementById(loadingId).remove();
+            const loadingElement = document.getElementById(loadingId);
+            if(loadingElement) loadingElement.remove();
+            
             messagesDiv.innerHTML += `<div class="ai-message bot">${marked.parse(aiResponse)}</div>`;
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
