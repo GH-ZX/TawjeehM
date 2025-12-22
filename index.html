@@ -76,14 +76,16 @@
             position: relative;
             display: inline-block;
             margin-bottom: 2rem;
+            text-align: center;
         }
         
         .section-title::after {
             content: '';
             position: absolute;
             bottom: -10px;
-            right: 0;
-            width: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
             height: 4px;
             background: var(--gold);
             border-radius: 2px;
@@ -209,8 +211,8 @@
             <a href="#designs" class="hover:text-gold transition-colors">التصاميم</a>
             <a href="#ai-hub" class="hover:text-gold transition-colors text-gold font-bold"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> الذكاء الاصطناعي</a>
         </div>
-        <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm">
-            دخول الأفراد
+        <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-transparent font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm">
+        000000
         </button>
     </nav>
 
@@ -221,7 +223,7 @@
         <header id="vision" class="min-h-[85vh] flex flex-col justify-center items-start text-right relative">
             <div class="max-w-4xl animate-fade-in-up">
                 <div class="inline-block px-3 py-1 border border-gold/30 rounded-full bg-gold/10 text-gold text-xs mb-4 font-bold tracking-wider">
-                    هيئة التوجيه المعنوي - الجيش العربي السوري
+                    هيئة التوجيه المعنوي 
                 </div>
                 <h1 class="text-6xl md:text-8xl font-black mb-6 leading-tight text-gold">
                     بوصلة
@@ -252,10 +254,93 @@
             </div>
         </header>
 
+        <!-- Identity Section (Restored) -->
+        <section id="identity" class="py-10">
+            <div class="flex flex-col items-center mb-12 text-center">
+                <h2 class="text-4xl font-bold mt-2 section-title">الهوية البصرية ونبرة الصوت</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+                <!-- Color Palette -->
+                <div class="glass p-8 rounded-2xl h-full">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-gold">
+                        <i class="fa-solid fa-palette"></i> فلسفة الألوان
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#1B2A41] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg">كحلي عميق (Deep Navy)</h4>
+                                <p class="text-sm text-gray-400">يوحي بالهيبة، الاحترافية، والعمق الاستراتيجي للمؤسسة العسكرية.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#7D8491] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg">رمادي تكتيكي (Tactical Grey)</h4>
+                                <p class="text-sm text-gray-400">لون حيادي وتقني، يربط الهوية بالمعدات الحديثة والانضباط.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#C9A66B] shadow-lg group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg text-gold">ذهبي مطفي (Matte Gold)</h4>
+                                <p class="text-sm text-gray-400">رمز الرتب العسكرية، القيمة المعنوية، والنصر.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 rounded-xl bg-[#A4243B] shadow-lg group-hover:scale-110 transition-transform"></div>
+                            <div>
+                                <h4 class="font-bold text-lg text-crimson">أحمر قرمزي (Crimson)</h4>
+                                <p class="text-sm text-gray-400">يستخدم للتنبيهات الهامة ويرمز للتضحية ودماء الشهداء.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tone of Voice -->
+                <div class="glass p-8 rounded-2xl h-full flex flex-col justify-center">
+                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-gold">
+                        <i class="fa-solid fa-microphone-lines"></i> نبرة الصوت والشخصية
+                    </h3>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-full bg-navy/50 flex items-center justify-center text-gold border border-gold/20 shrink-0">
+                                <i class="fa-solid fa-gavel"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">حازمة وهادئة</h4>
+                                <p class="text-sm text-gray-400">لا صراخ في العناوين، بل قوة واثقة تعكس انضباط الجندي السوري.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-full bg-navy/50 flex items-center justify-center text-crimson border border-crimson/20 shrink-0">
+                                <i class="fa-solid fa-fire-flame-curved"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">ملهمة وبطولية</h4>
+                                <p class="text-sm text-gray-400">تركز على الجانب الإنساني وقصص البطولة، وتخاطب العقل والقلب معاً.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <div class="w-12 h-12 rounded-full bg-navy/50 flex items-center justify-center text-teal-400 border border-teal-400/20 shrink-0">
+                                <i class="fa-solid fa-book-quran"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">شرعية وواعية</h4>
+                                <p class="text-sm text-gray-400">لغة عربية سليمة، ومصطلحات تعزز العقيدة القتالية والقيم الأخلاقية.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Activities Section -->
         <section id="activities" class="py-10">
             <div class="flex flex-col items-center mb-12 text-center">
-                <span class="text-gold uppercase tracking-widest text-sm font-bold">مهام الهيئة الإعلامية</span>
                 <h2 class="text-4xl font-bold mt-2 section-title">أنشطة التغطية والتوجيه</h2>
             </div>
             
@@ -332,7 +417,6 @@
         <!-- Programs Section (Updated for Moral Guidance) -->
         <section id="programs">
             <div class="text-center mb-16">
-                <span class="text-gold uppercase tracking-widest text-sm font-bold">الدورة البرامجية الموجهة</span>
                 <h2 class="text-5xl font-bold mt-2 mb-4">برامج التوجيه المعنوي</h2>
                 <p class="text-gray-400 max-w-2xl mx-auto">محتوى إعلامي متخصص يستهدف بناء شخصية المقاتل السوري وتحصينه فكرياً وعقائدياً.</p>
             </div>
@@ -421,7 +505,9 @@
 
         <!-- New Section: Designs -->
         <section id="designs" class="py-10">
-            <h2 class="text-4xl font-bold mb-12 section-title">التصاميم والمطبوعات</h2>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold section-title">التصاميم والمطبوعات</h2>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Design Type 1 -->
@@ -465,7 +551,9 @@
 
         <!-- Sketches Section -->
         <section id="sketches" class="py-10">
-            <h2 class="text-4xl font-bold mb-12 section-title">الاسكتشات الدرامية</h2>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold section-title">الاسكتشات الدرامية</h2>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Sketch 1 -->
@@ -514,8 +602,8 @@
 
         <!-- AI HUB Section -->
         <section id="ai-hub" class="py-10">
-            <div class="flex items-center gap-3 mb-8">
-                <i class="fa-solid fa-microchip text-3xl text-gold"></i>
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-microchip text-3xl text-gold mb-4"></i>
                 <h2 class="text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
             </div>
             
@@ -576,7 +664,9 @@
 
         <!-- Team Section -->
         <section id="team" class="py-10">
-            <h2 class="text-4xl font-bold mb-12 section-title">الهيكل التنفيذي</h2>
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold section-title">الهيكل التنفيذي</h2>
+            </div>
             <div class="glass p-8 rounded-3xl flex flex-wrap justify-center gap-8 text-center">
                 
                 <div class="flex flex-col items-center gap-2 w-32">
@@ -615,7 +705,7 @@
         </section>
 
         <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8">
-            <p class="mb-2">جميع الحقوق محفوظة © 2024 هيئة التوجيه المعنوي - الجيش العربي السوري</p>
+            <p class="mb-2">جميع الحقوق محفوظة © 2025 هيئة التوجيه المعنوي </p>
             <p class="text-xs">منصة "بوصلة" - نحو الحقيقة وعمق الوعي</p>
         </footer>
 
