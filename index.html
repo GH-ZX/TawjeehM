@@ -2,25 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة بوصلة | Bawsala Platform</title>
-    <!-- Favicon: Simple Compass Logo -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%231B2A41%22/><path d=%22M50 15 L65 50 L50 85 L35 50 Z%22 fill=%22%23C9A66B%22/></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة بوصلة | هيئة التوجيه المعنوي</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: '#1B2A41',
-                        gold: '#C9A66B',
-                        crimson: '#A4243B',
-                    }
-                }
-            }
-        }
-    </script>
     <!-- Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Font Awesome -->
@@ -44,38 +29,6 @@
             color: white;
             overflow-x: hidden;
             margin: 0;
-            /* Prevent pull-to-refresh on mobile */
-            overscroll-behavior-y: none;
-        }
-
-        /* Input Fields Fixes (CRITICAL) */
-        input, textarea {
-            color: white !important;
-            background-color: rgba(27, 42, 65, 0.6) !important; /* Dark background */
-            caret-color: var(--gold); /* Gold cursor */
-        }
-        
-        input:focus, textarea:focus {
-            background-color: rgba(27, 42, 65, 0.9) !important;
-            color: #ffffff !important;
-            border-color: var(--gold) !important;
-            outline: none !important;
-            box-shadow: 0 0 0 2px rgba(201, 166, 107, 0.2);
-        }
-
-        /* Placeholder Color */
-        ::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-        }
-
-        /* Fix for Autofill (Chrome/Safari turns background white) */
-        input:-webkit-autofill,
-        input:-webkit-autofill:hover, 
-        input:-webkit-autofill:focus, 
-        input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #1B2A41 inset !important;
-            -webkit-text-fill-color: white !important;
-            transition: background-color 5000s ease-in-out 0s;
         }
 
         /* 3D Canvas Background */
@@ -103,6 +56,7 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(201, 166, 107, 0.1); /* Gold tint border */
             transition: all 0.4s ease;
+            overflow: hidden;
         }
 
         .glass-card:hover {
@@ -193,6 +147,22 @@
             border-left: 3px solid var(--grey);
             margin-right: 2rem;
         }
+        
+        /* Activity Image Hover */
+        .activity-img-container {
+            position: relative;
+            overflow: hidden;
+            height: 180px;
+        }
+        .activity-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        .glass-card:hover .activity-img {
+            transform: scale(1.1);
+        }
         .typing-indicator span {
             display: inline-block;
             width: 6px;
@@ -208,27 +178,6 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
-
-        /* Mobile Input Fixes */
-        @media screen and (max-width: 768px) {
-            input[type="text"], 
-            input[type="email"], 
-            textarea {
-                font-size: 16px !important; /* Prevents iOS Zoom */
-                transform: scale(1);
-            }
-            
-            /* Ensure nav doesn't take too much space on mobile */
-            nav {
-                padding-top: 0.5rem;
-                padding-bottom: 0.5rem;
-            }
-            
-            /* Add padding to bottom of AI chat so keyboard doesn't hide last message */
-            #chat-messages {
-                padding-bottom: 100px;
-            }
-        }
     </style>
 </head>
 <body class="antialiased">
@@ -237,7 +186,7 @@
     <div id="loader">
         <div class="flex flex-col items-center">
             <div class="compass-loader mb-4"></div>
-            <p class="text-gold tracking-widest text-sm">جاري تهيئة النظام...</p>
+            <p class="text-gold tracking-widest text-sm">هيئة التوجيه المعنوي</p>
         </div>
     </div>
 
@@ -250,68 +199,340 @@
             <i class="fa-solid fa-compass text-3xl text-gold"></i>
             <div class="flex flex-col">
                 <span class="text-xl font-bold tracking-wide">بَوْصَلة</span>
-                <span class="text-[10px] text-gray-400 uppercase tracking-wider hidden md:block">BAWSALA PLATFORM</span>
+                <span class="text-[10px] text-gray-400 uppercase tracking-wider">هيئة التوجيه المعنوي</span>
             </div>
         </div>
-        <div class="hidden md:flex gap-8 text-sm font-medium text-gray-300">
+        <div class="hidden md:flex gap-6 text-sm font-medium text-gray-300">
             <a href="#vision" class="hover:text-gold transition-colors">الرؤية</a>
-            <a href="#ai-hub" class="hover:text-gold transition-colors text-gold font-bold"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> الذكاء الاصطناعي</a>
+            <a href="#activities" class="hover:text-gold transition-colors">الأنشطة</a>
             <a href="#programs" class="hover:text-gold transition-colors">البرامج</a>
-            <a href="#team" class="hover:text-gold transition-colors">الفريق</a>
+            <a href="#designs" class="hover:text-gold transition-colors">التصاميم</a>
+            <a href="#ai-hub" class="hover:text-gold transition-colors text-gold font-bold"><i class="fa-solid fa-wand-magic-sparkles ml-1"></i> الذكاء الاصطناعي</a>
         </div>
-        <div class="flex gap-3">
-            <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm hidden sm:block">
-                تسجيل الدخول
-            </button>
-        </div>
+        <button class="bg-gradient-to-r from-[#C9A66B] to-[#b08d55] text-navy font-bold py-2 px-6 rounded-lg hover:shadow-[0_0_15px_rgba(201,166,107,0.5)] transition-all transform hover:scale-105 text-sm">
+            دخول الأفراد
+        </button>
     </nav>
 
     <!-- Main Content -->
     <main class="relative z-10 pt-32 pb-20 px-4 md:px-0 max-w-7xl mx-auto space-y-32">
 
-        <!-- Hero Section -->
-        <header id="vision" class="min-h-[80vh] flex flex-col justify-center items-start text-right relative">
-            <div class="max-w-3xl animate-fade-in-up">
+        <!-- Hero Section (Vision & Mission) -->
+        <header id="vision" class="min-h-[85vh] flex flex-col justify-center items-start text-right relative">
+            <div class="max-w-4xl animate-fade-in-up">
                 <div class="inline-block px-3 py-1 border border-gold/30 rounded-full bg-gold/10 text-gold text-xs mb-4 font-bold tracking-wider">
-                    إعلام عسكري بتوجيه حديث
+                    هيئة التوجيه المعنوي - الجيش العربي السوري
                 </div>
-                <h1 class="text-5xl md:text-8xl font-black mb-2 leading-tight">
+                <h1 class="text-6xl md:text-8xl font-black mb-6 leading-tight">
                     نحو <span class="text-transparent bg-clip-text bg-gradient-to-t from-gold to-white">الحقيقة</span>..
                     <br>وعمق <span class="text-gold">الوعي</span>.
                 </h1>
-                <p class="text-lg md:text-2xl text-gray-300 mt-6 leading-relaxed max-w-2xl border-r-4 border-crimson pr-6">
-                    منصة "بوصلة" هي أداتك لتحديد الاتجاه الصحيح وسط ضبابية المعلومات. نحن لا نأمرك، بل نرشدك للحقيقة بأسلوب يحترم عقلك.
-                </p>
                 
+                <!-- Vision & Mission Blocks -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div class="glass p-6 rounded-xl border-r-4 border-gold">
+                        <h3 class="text-xl font-bold text-gold mb-2"><i class="fa-solid fa-eye ml-2"></i> الرؤية</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            أن نكون "البوصلة" الموثوقة والمنارة الأولى لصناعة الوعي الفكري والمعنوي للجندي السوري، والمرجع الإعلامي الأكثر تأثيراً في دحض الشائعات وتعزيز الانتماء.
+                        </p>
+                    </div>
+                    <div class="glass p-6 rounded-xl border-r-4 border-crimson">
+                        <h3 class="text-xl font-bold text-crimson mb-2"><i class="fa-solid fa-bullseye ml-2"></i> الرسالة</h3>
+                        <p class="text-gray-300 leading-relaxed">
+                            إنتاج محتوى إعلامي استراتيجي يجمع بين القيم العسكرية الراسخة وأحدث تقنيات التأثير، لتعزيز الحصانة الفكرية وتغطية الأنشطة بشفافية واحترافية.
+                        </p>
+                    </div>
+                </div>
+
                 <div class="mt-10 flex gap-4">
                     <a href="#programs" class="glass px-8 py-4 rounded-lg font-bold text-white hover:bg-white/10 transition flex items-center gap-3 group">
-                        استكشف البرامج
+                        استعراض البرامج
                         <i class="fa-solid fa-arrow-down group-hover:translate-y-1 transition-transform text-gold"></i>
                     </a>
                 </div>
             </div>
         </header>
 
-        <!-- AI HUB Section (New) -->
-        <section id="ai-hub" class="py-10 scroll-mt-24">
+        <!-- Activities Section -->
+        <section id="activities" class="py-10">
+            <div class="flex flex-col items-center mb-12 text-center">
+                <span class="text-gold uppercase tracking-widest text-sm font-bold">مهام الهيئة الإعلامية</span>
+                <h2 class="text-4xl font-bold mt-2 section-title">أنشطة التغطية والتوجيه</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Activity 1 -->
+                <div class="glass-card rounded-2xl group">
+                    <div class="activity-img-container">
+                        <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800" alt="فعاليات عسكرية" class="activity-img">
+                        <div class="absolute inset-0 bg-navy/60 group-hover:bg-navy/30 transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gold">1. تغطية الفعاليات</h3>
+                        <p class="text-sm text-gray-300 mb-3">توثيق احترافي للفعاليات ضمن الوحدات العسكرية وخارجها، وإبراز الجاهزية والمعنويات العالية.</p>
+                        <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">توثيق رسمي</span>
+                    </div>
+                </div>
+
+                <!-- Activity 2 -->
+                <div class="glass-card rounded-2xl group">
+                    <div class="activity-img-container">
+                        <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&q=80&w=800" alt="ندوات تثقيفية" class="activity-img">
+                        <div class="absolute inset-0 bg-navy/60 group-hover:bg-navy/30 transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gold">2. الندوات التثقيفية</h3>
+                        <p class="text-sm text-gray-300 mb-3">تسويق ونقل حي للجلسات الحوارية التي تناقش القضايا الاستراتيجية والفكرية التي تهم المقاتل.</p>
+                        <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">توعية فكرية</span>
+                    </div>
+                </div>
+
+                <!-- Activity 3 -->
+                <div class="glass-card rounded-2xl group">
+                    <div class="activity-img-container">
+                        <img src="https://images.unsplash.com/photo-1515168816992-d2072111d4d1?auto=format&fit=crop&q=80&w=800" alt="مؤتمرات" class="activity-img">
+                        <div class="absolute inset-0 bg-navy/60 group-hover:bg-navy/30 transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gold">3. المؤتمرات العسكرية</h3>
+                        <p class="text-sm text-gray-300 mb-3">تغطية شاملة للمؤتمرات العسكرية والعلمية، مع التركيز على مخرجاتها التي تخدم المؤسسة.</p>
+                        <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">تغطية إعلامية</span>
+                    </div>
+                </div>
+
+                <!-- Activity 4 -->
+                <div class="glass-card rounded-2xl group">
+                    <div class="activity-img-container">
+                        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&q=80&w=800" alt="نشرات" class="activity-img">
+                        <div class="absolute inset-0 bg-navy/60 group-hover:bg-navy/30 transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gold">4. المنشورات والمطبوعات</h3>
+                        <p class="text-sm text-gray-300 mb-3">النشر الرقمي للكتب والمجلات الدورية والمطويات التوجيهية الصادرة عن الهيئة.</p>
+                        <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">ثقافة عسكرية</span>
+                    </div>
+                </div>
+
+                <!-- Activity 5 -->
+                <div class="glass-card rounded-2xl group">
+                    <div class="activity-img-container">
+                        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800" alt="دروس دينية" class="activity-img">
+                        <div class="absolute inset-0 bg-navy/60 group-hover:bg-navy/30 transition-colors"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-gold">5. الدروس العلمية</h3>
+                        <p class="text-sm text-gray-300 mb-3">تسجيل ونشر الدروس الدينية والتوجيهية لتعزيز العقيدة القتالية والوازع الديني.</p>
+                        <span class="text-xs border border-white/20 px-2 py-1 rounded text-gray-400">بناء عقائدي</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Programs Section (Updated for Moral Guidance) -->
+        <section id="programs">
+            <div class="text-center mb-16">
+                <span class="text-gold uppercase tracking-widest text-sm font-bold">الدورة البرامجية الموجهة</span>
+                <h2 class="text-5xl font-bold mt-2 mb-4">برامج التوجيه المعنوي</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">محتوى إعلامي متخصص يستهدف بناء شخصية المقاتل السوري وتحصينه فكرياً وعقائدياً.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Program 1 (Keep) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-orange-500 border border-orange-500/20">
+                        <i class="fa-solid fa-microphone-lines text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">بودكاست "الخندق"</h3>
+                    <p class="text-sm text-orange-400 mb-4 font-mono">تاريخ وذكريات</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        حوارات مع قادة الميدان وقدامى المحاربين، لربط الجيل الجديد ببطولات الجيش وتاريخه المشرف.
+                    </p>
+                </div>
+
+                <!-- Program 2 (Modified) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-blue-400 border border-blue-400/20">
+                        <i class="fa-solid fa-heart-pulse text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">برنامج "فولاذ"</h3>
+                    <p class="text-sm text-blue-300 mb-4 font-mono">بناء عقائدي</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        برنامج يركز على "القوة الداخلية"، تقوية الإيمان، الثبات الانفعالي، وربط الصبر والتحمل بعقيدة الجندي المؤمنة.
+                    </p>
+                </div>
+
+                <!-- Program 3 (Keep) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-yellow-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-yellow-600 border border-yellow-600/20">
+                        <i class="fa-solid fa-scroll text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">سلسلة "جذور"</h3>
+                    <p class="text-sm text-yellow-500 mb-4 font-mono">هوية وانتماء</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        تعزيز الهوية الوطنية السورية، وسرد قصص التضحية التي شكلت وجدان الجيش عبر التاريخ.
+                    </p>
+                </div>
+
+                <!-- Program 4 (New Proposal) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-teal-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-teal-500 border border-teal-500/20">
+                        <i class="fa-solid fa-kaaba text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">عقيدتنا</h3>
+                    <p class="text-sm text-teal-400 mb-4 font-mono">توجيه ديني</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        برنامج ديني توعوي يربط بين القيم الروحية والمهام العسكرية، ويوضح فقه الجهاد والدفاع عن الوطن.
+                    </p>
+                </div>
+
+                <!-- Program 5 (New Proposal) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-indigo-500 border border-indigo-500/20">
+                        <i class="fa-solid fa-scale-balanced text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">البوصلة الأخلاقية</h3>
+                    <p class="text-sm text-indigo-400 mb-4 font-mono">ضبط وسلوك</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        توعية بقانون الخدمة العسكرية، تعزيز الانضباط، وشرح حقوق وواجبات المقاتل وأخلاقيات الحرب.
+                    </p>
+                </div>
+
+                <!-- Program 6 (New Proposal) -->
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
+                    <div class="absolute top-0 left-0 w-1 h-full bg-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-red-500 border border-red-500/20">
+                        <i class="fa-solid fa-eye text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">حراس الثغور</h3>
+                    <p class="text-sm text-red-400 mb-4 font-mono">أمن وتحصين</p>
+                    <p class="text-gray-300 text-sm leading-relaxed">
+                        برنامج توعية أمنية لمواجهة الحرب النفسية، أمن المعلومات، وكيفية التعامل مع الشائعات المعادية.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- New Section: Designs -->
+        <section id="designs" class="py-10">
+            <h2 class="text-4xl font-bold mb-12 section-title">التصاميم والمطبوعات</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Design Type 1 -->
+                <div class="glass p-6 rounded-xl border-t-4 border-gold text-center hover:bg-white/5 transition">
+                    <div class="text-3xl text-gold mb-4"><i class="fa-solid fa-sun"></i></div>
+                    <h3 class="text-xl font-bold mb-2">تصاميم يومية</h3>
+                    <p class="text-gray-400 text-sm">بطاقات صباحية ومسائية تتضمن حكماً عسكرية وآيات قرآنية لرفع الروح المعنوية.</p>
+                </div>
+
+                <!-- Design Type 2 -->
+                <div class="glass p-6 rounded-xl border-t-4 border-crimson text-center hover:bg-white/5 transition">
+                    <div class="text-3xl text-crimson mb-4"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3 class="text-xl font-bold mb-2">أنشطة وفعاليات</h3>
+                    <p class="text-gray-400 text-sm">بوسترات وتغطيات جرافيكية للندوات، التخريجات، والزيارات الميدانية للقادة.</p>
+                </div>
+
+                <!-- Design Type 3 -->
+                <div class="glass p-6 rounded-xl border-t-4 border-teal-400 text-center hover:bg-white/5 transition">
+                    <div class="text-3xl text-teal-400 mb-4"><i class="fa-solid fa-moon"></i></div>
+                    <h3 class="text-xl font-bold mb-2">المواسم والمناسبات</h3>
+                    <p class="text-gray-400 text-sm">تصاميم خاصة لشهر رمضان، الأعياد، ليلة القدر، والنصف من شعبان بصبغة عسكرية.</p>
+                </div>
+
+                <!-- Design Type 4 (Suggested) -->
+                <div class="glass p-6 rounded-xl border-t-4 border-white text-center hover:bg-white/5 transition">
+                    <div class="text-3xl text-white mb-4"><i class="fa-solid fa-medal"></i></div>
+                    <h3 class="text-xl font-bold mb-2">وصايا الخالدين</h3>
+                    <p class="text-gray-400 text-sm">بطاقات تخلد ذكرى الشهداء وتقتبس من وصاياهم لتكون نبراساً لرفاق السلاح.</p>
+                </div>
+            </div>
+            
+            <!-- Additional Suggestion Banner -->
+            <div class="mt-8 glass p-6 rounded-xl flex items-center gap-4 border border-indigo-500/30">
+                <i class="fa-solid fa-lightbulb text-indigo-400 text-2xl"></i>
+                <div>
+                    <h4 class="font-bold text-indigo-400">مقترح إضافي: "انفوجرافيك الوعي القانوني"</h4>
+                    <p class="text-sm text-gray-300">سلسلة تصاميم مبسطة تشرح مواد قانون العقوبات العسكرية وحقوق الجندي لتجنب المخالفات.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sketches Section -->
+        <section id="sketches" class="py-10">
+            <h2 class="text-4xl font-bold mb-12 section-title">الاسكتشات الدرامية</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Sketch 1 -->
+                <div class="glass p-6 rounded-2xl flex flex-col gap-4 hover:bg-white/5 transition border-t-2 border-gold/30">
+                    <div class="text-4xl text-gold">
+                        <i class="fa-solid fa-masks-theater"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">اسكتش "كتف بكتف"</h3>
+                        <p class="text-gray-400 text-xs mb-3 font-mono">دراما إنسانية</p>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            مشاهد تركز على التضحية والإيثار بين رفاق السلاح، وكيف يحمي المقاتل ظهر أخيه في الميدان.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sketch 2 -->
+                <div class="glass p-6 rounded-2xl flex flex-col gap-4 hover:bg-white/5 transition border-t-2 border-crimson/30">
+                    <div class="text-4xl text-crimson">
+                        <i class="fa-solid fa-comment-slash"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">سلسلة "إشاعة في العنبر"</h3>
+                        <p class="text-gray-400 text-xs mb-3 font-mono">توعية أمنية</p>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            تجسيد لكيفية بدء الشائعة وتدميرها للمعنويات، ثم إعادة المشهد بالتصرف الصحيح لإيقافها.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sketch 3 (Restored & Refined) -->
+                <div class="glass p-6 rounded-2xl flex flex-col gap-4 hover:bg-white/5 transition border-t-2 border-teal-400/30">
+                    <div class="text-4xl text-teal-400">
+                        <i class="fa-solid fa-person-military-pointing"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-2">يوميات "مستجد"</h3>
+                        <p class="text-gray-400 text-xs mb-3 font-mono">توجيه اجتماعي</p>
+                        <p class="text-gray-300 text-sm leading-relaxed">
+                            مواقف واقعية من حياة الجندي الجديد، نبرز فيها التحول من فوضى الحياة المدنية إلى انضباط العسكرية بأسلوب قريب من القلب لكسر حاجز الرهبة.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI HUB Section -->
+        <section id="ai-hub" class="py-10">
             <div class="flex items-center gap-3 mb-8">
                 <i class="fa-solid fa-microchip text-3xl text-gold"></i>
-                <h2 class="text-3xl md:text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
+                <h2 class="text-4xl font-bold section-title mb-0">مركز الذكاء الاصطناعي</h2>
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 <!-- AI Tool 1: The Advisor (Chat) -->
-                <div class="glass p-6 rounded-2xl col-span-1 lg:col-span-2 flex flex-col h-[500px]">
+                <div class="glass p-6 rounded-2xl col-span-1 lg:col-span-2 flex flex-col min-h-[500px]">
                     <div class="border-b border-white/10 pb-4 mb-4 flex justify-between items-center">
-                        <h3 class="text-xl font-bold text-gold"><i class="fa-solid fa-user-graduate ml-2"></i> المستشار الذكي ✨</h3>
+                        <h3 class="text-xl font-bold text-gold"><i class="fa-solid fa-user-graduate ml-2"></i> المستشار المعنوي ✨</h3>
                         <span class="text-xs bg-gold/20 text-gold px-2 py-1 rounded">Beta</span>
                     </div>
                     
                     <!-- Chat Area -->
                     <div id="chat-messages" class="flex-1 overflow-y-auto mb-4 pr-2 custom-scrollbar">
                         <div class="ai-message bot">
-                            مرحباً بك أيها البطل. أنا مستشارك الذكي في "بوصلة". يمكنك سؤالي عن التوجيه المعنوي، العقيدة العسكرية، أو كيفية التعامل مع الشائعات. كيف أخدمك اليوم؟
+                            مرحباً بك أيها المقاتل. أنا مستشارك في "التوجيه المعنوي". اسألني عن العقيدة العسكرية، التاريخ العسكري السوري، أو المسائل المعنوية.
                         </div>
                     </div>
 
@@ -319,7 +540,7 @@
                     <div class="relative">
                         <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." 
                             class="w-full bg-navy/50 border border-gray-600 rounded-lg py-3 px-4 pl-12 focus:outline-none focus:border-gold transition text-white">
-                        <button onclick="sendChatMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gold hover:text-white transition p-2">
+                        <button onclick="sendChatMessage()" class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gold hover:text-white transition">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -330,8 +551,8 @@
                     
                     <!-- AI Tool 2: Rumor Analyzer -->
                     <div class="glass p-6 rounded-2xl flex-1">
-                        <h3 class="text-xl font-bold text-crimson mb-4"><i class="fa-solid fa-magnifying-glass-chart ml-2"></i> محلل المحتوى ✨</h3>
-                        <p class="text-xs text-gray-400 mb-4">أداة تابعة لبرنامج "حصن الجندي". الصق أي خبر لتحليله وكشف المغالطات.</p>
+                        <h3 class="text-xl font-bold text-crimson mb-4"><i class="fa-solid fa-magnifying-glass-chart ml-2"></i> محلل الشائعات ✨</h3>
+                        <p class="text-xs text-gray-400 mb-4">أداة أمنية لتحليل الأخبار المغلوطة وتفكيك الحرب النفسية المعادية.</p>
                         <textarea id="rumor-input" rows="4" placeholder="الصق النص المشكوك فيه هنا..." class="w-full bg-navy/50 border border-gray-600 rounded-lg p-3 text-sm focus:border-crimson outline-none mb-3 text-white"></textarea>
                         <button onclick="analyzeRumor()" class="w-full bg-crimson/80 hover:bg-crimson text-white py-2 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
                             <i class="fa-solid fa-shield-halved"></i> تحليل فوري
@@ -342,8 +563,8 @@
                     <!-- AI Tool 3: Content Generator -->
                     <div class="glass p-6 rounded-2xl flex-1">
                         <h3 class="text-xl font-bold text-teal-400 mb-4"><i class="fa-solid fa-lightbulb ml-2"></i> صانع الومضات ✨</h3>
-                        <p class="text-xs text-gray-400 mb-4">توليد رسائل تحفيزية لبرنامج "ومضات" بناءً على موضوع.</p>
-                        <input type="text" id="spark-topic" placeholder="الموضوع (مثلاً: الصبر، الانضباط)" class="w-full bg-navy/50 border border-gray-600 rounded-lg p-2 text-sm focus:border-teal-400 outline-none mb-3 text-white">
+                        <p class="text-xs text-gray-400 mb-4">توليد رسائل توجيهية قصيرة لرفع الروح المعنوية.</p>
+                        <input type="text" id="spark-topic" placeholder="الموضوع (مثلاً: الصمود، الإيثار)" class="w-full bg-navy/50 border border-gray-600 rounded-lg p-2 text-sm focus:border-teal-400 outline-none mb-3 text-white">
                         <button onclick="generateSpark()" class="w-full bg-teal-600/80 hover:bg-teal-600 text-white py-2 rounded-lg text-sm font-bold transition flex justify-center items-center gap-2">
                             <i class="fa-solid fa-pen-nib"></i> توليد ومضة
                         </button>
@@ -354,151 +575,7 @@
             </div>
         </section>
 
-        <!-- Identity Section -->
-        <section id="identity" class="py-10">
-            <h2 class="text-4xl font-bold mb-12 section-title">الهوية البصرية والتكتيكية</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                <!-- Color Palette -->
-                <div class="glass p-8 rounded-2xl">
-                    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">
-                        <i class="fa-solid fa-palette text-gold"></i> لوحة الألوان
-                    </h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 group">
-                            <div class="w-16 h-16 rounded-xl bg-[#1B2A41] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
-                            <div>
-                                <h4 class="font-bold text-lg">كحلي عميق (Deep Navy)</h4>
-                                <p class="text-sm text-gray-400">يرمز للهيبة، الاحترافية، والعمق الاستراتيجي.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4 group">
-                            <div class="w-16 h-16 rounded-xl bg-[#7D8491] shadow-lg border border-gray-600 group-hover:scale-110 transition-transform"></div>
-                            <div>
-                                <h4 class="font-bold text-lg">رمادي تكتيكي (Tactical Grey)</h4>
-                                <p class="text-sm text-gray-400">لون محايد، تقني، ويرمز للمعدات الحديثة.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4 group">
-                            <div class="w-16 h-16 rounded-xl bg-[#C9A66B] shadow-lg group-hover:scale-110 transition-transform"></div>
-                            <div>
-                                <h4 class="font-bold text-lg text-gold">ذهبي مطفي (Matte Gold)</h4>
-                                <p class="text-sm text-gray-400">يرمز للرتب، القيمة المعنوية، والنصر.</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4 group">
-                            <div class="w-16 h-16 rounded-xl bg-[#A4243B] shadow-lg group-hover:scale-110 transition-transform"></div>
-                            <div>
-                                <h4 class="font-bold text-lg text-crimson">أحمر قرمزي (Crimson)</h4>
-                                <p class="text-sm text-gray-400">لنقاط التنبيه والتضحية.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Logo Concept -->
-                <div class="relative h-full min-h-[400px] flex items-center justify-center">
-                    <div class="absolute inset-0 bg-gold/5 blur-3xl rounded-full"></div>
-                    <div class="glass p-10 rounded-full w-80 h-80 flex flex-col items-center justify-center text-center relative z-10 border-2 border-gold/20">
-                        <i class="fa-solid fa-compass text-8xl text-gold mb-4 animate-pulse"></i>
-                        <h3 class="text-3xl font-black tracking-wider">بَوْصَلة</h3>
-                        <p class="text-xs tracking-[0.3em] mt-2 text-gray-400">BAWSALA</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Programs Section (The Core) -->
-        <section id="programs">
-            <div class="text-center mb-16">
-                <span class="text-gold uppercase tracking-widest text-sm font-bold">استراتيجية المحتوى</span>
-                <h2 class="text-4xl md:text-5xl font-bold mt-2 mb-4">البرامج المعتمدة</h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">توزيع المحتوى لخدمة أهداف التوجيه المعنوي بقوالب فنية عصرية تواكب الإعلام الرقمي.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                <!-- Program 1 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-gold opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-gold border border-gold/20">
-                        <i class="fa-solid fa-bolt text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">ومضات معنوية</h3>
-                    <p class="text-sm text-gold/80 mb-4 font-mono">Reels / Shorts</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        جرعات مكثفة وسريعة (أقل من 60 ثانية) تحفز الهمم وترفع الروح القتالية. بديل عصري للمحاضرات الطويلة.
-                    </p>
-                </div>
-
-                <!-- Program 2 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-crimson opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-crimson border border-crimson/20">
-                        <i class="fa-solid fa-shield-halved text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">حصن الجندي</h3>
-                    <p class="text-sm text-crimson/80 mb-4 font-mono">Explainer Video</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        البرنامج الفكري "العميق". يناقش الشبهات، يفكك الحرب النفسية، ويحمي عقل الجندي من التيارات المنحرفة.
-                    </p>
-                </div>
-
-                <!-- Program 3 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-teal-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-teal-400 border border-teal-400/20">
-                        <i class="fa-solid fa-mosque text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">نور الثكنات</h3>
-                    <p class="text-sm text-teal-400/80 mb-4 font-mono">Cinematic / Spiritual</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        الجانب الروحي الهادئ. تصوير سينمائي داخل المصليات يركز على الطمأنينة والصبر، كاستراحة محارب للنفس.
-                    </p>
-                </div>
-
-                <!-- Program 4 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-indigo-400 border border-indigo-400/20">
-                        <i class="fa-solid fa-book-open text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">فقه الجندي</h3>
-                    <p class="text-sm text-indigo-400/80 mb-4 font-mono">Motion Graphics</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        تبسيط الأحكام الفقهية الميدانية (الصلاة في الخوف، الطهارة) بأسلوب بصري جذاب وسهل الفهم.
-                    </p>
-                </div>
-
-                <!-- Program 5 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-orange-400 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-orange-400 border border-orange-400/20">
-                        <i class="fa-solid fa-binoculars text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">تأملات من الميدان</h3>
-                    <p class="text-sm text-orange-400/80 mb-4 font-mono">Documentary</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        نقل الصورة الحية. قصص بطولية ومشاهد تدريب احترافية بجودة عالية، لتعزيز الفخر والانتماء.
-                    </p>
-                </div>
-
-                <!-- Program 6 -->
-                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group cursor-pointer">
-                    <div class="absolute top-0 left-0 w-1 h-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-12 h-12 rounded-lg bg-navy/50 flex items-center justify-center mb-4 text-white border border-white/20">
-                        <i class="fa-solid fa-user-shield text-xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-2">رسالة القائد</h3>
-                    <p class="text-sm text-gray-400 mb-4 font-mono">Direct Speech</p>
-                    <p class="text-gray-300 text-sm leading-relaxed">
-                        كلمة مباشرة وتوجيهية. يتم تصويرها في الميدان لتعزيز الثقة والترابط بين القيادة والجنود.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Team Structure -->
+        <!-- Team Section -->
         <section id="team" class="py-10">
             <h2 class="text-4xl font-bold mb-12 section-title">الهيكل التنفيذي</h2>
             <div class="glass p-8 rounded-3xl flex flex-wrap justify-center gap-8 text-center">
@@ -507,7 +584,7 @@
                     <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-yellow-700 flex items-center justify-center shadow-lg mb-2">
                         <i class="fa-solid fa-crown text-white text-xl"></i>
                     </div>
-                    <p class="font-bold text-sm">مسؤول القسم</p>
+                    <p class="font-bold text-sm">مدير التوجيه</p>
                     <p class="text-xs text-gray-400">الإشراف العام</p>
                 </div>
 
@@ -515,48 +592,40 @@
                     <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
                         <i class="fa-solid fa-pen-nib text-white text-xl"></i>
                     </div>
-                    <p class="font-bold text-sm">كتّاب محتوى</p>
-                    <p class="text-xs text-gray-400">شرعي + سيناريو</p>
+                    <p class="font-bold text-sm">ضباط توجيه</p>
+                    <p class="text-xs text-gray-400">إعداد المحتوى</p>
                 </div>
 
                 <div class="flex flex-col items-center gap-2 w-32">
                     <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
                         <i class="fa-solid fa-film text-white text-xl"></i>
                     </div>
-                    <p class="font-bold text-sm">مونتير (2)</p>
-                    <p class="text-xs text-gray-400">تحرير الفيديو</p>
-                </div>
-
-                <div class="flex flex-col items-center gap-2 w-32">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
-                        <i class="fa-solid fa-bezier-curve text-white text-xl"></i>
-                    </div>
-                    <p class="font-bold text-sm">جرافيك (2)</p>
-                    <p class="text-xs text-gray-400">تصميم وموشن</p>
+                    <p class="font-bold text-sm">قسم فني</p>
+                    <p class="text-xs text-gray-400">مونتاج وجرافيك</p>
                 </div>
 
                 <div class="flex flex-col items-center gap-2 w-32">
                     <div class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg mb-2">
                         <i class="fa-solid fa-camera text-white text-xl"></i>
                     </div>
-                    <p class="font-bold text-sm">مصورين (5)</p>
-                    <p class="text-xs text-gray-400">تغطية ميدانية</p>
+                    <p class="font-bold text-sm">إعلام ميداني</p>
+                    <p class="text-xs text-gray-400">تغطية وتوثيق</p>
                 </div>
 
             </div>
         </section>
 
-        <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8 pb-10">
-            <p class="mb-2">جميع الحقوق محفوظة © 2025 منصة بوصلة - التوجيه المعنوي</p>
+        <footer class="text-center text-gray-500 text-sm mt-20 border-t border-white/10 pt-8">
+            <p class="mb-2">جميع الحقوق محفوظة © 2024 هيئة التوجيه المعنوي - الجيش العربي السوري</p>
+            <p class="text-xs">منصة "بوصلة" - نحو الحقيقة وعمق الوعي</p>
         </footer>
 
     </main>
 
     <!-- Script for 3D Background & Logic -->
     <script>
-        // --- API KEY CONFIGURATION ---
-        // تنبيه: هذا المفتاح سيظهر لأي شخص يرى كود الموقع. تأكد من تأمين حسابك في Google Console
-        const apiKey = "AIzaSyC8vun5VBW9SNmDyeAgmLxFohmj6V7HZ9M";
+        // --- Gemini API Logic ---
+        const apiKey = ""; // API Key provided by environment
 
         // Helper function for API calls
         async function callGemini(prompt, systemInstruction = "") {
@@ -573,29 +642,15 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const data = await response.json();
-                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من فهم الرد.";
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، حدث خطأ في معالجة طلبك.";
             } catch (error) {
                 console.error("Gemini API Error:", error);
-                return "عذراً، حدث خطأ في الاتصال بالخدمة. تأكد من اتصالك بالإنترنت وصلاحية مفتاح API.";
+                return "عذراً، الخدمة غير متاحة حالياً.";
             }
         }
-
-        // --- MOBILE INPUT HANDLING ---
-        // Fix for keyboard hiding input on mobile
-        const inputs = document.querySelectorAll('input, textarea');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                setTimeout(() => {
-                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 300);
-            });
-        });
-
 
         // 1. Chat Logic
         async function sendChatMessage() {
@@ -618,22 +673,21 @@
             `;
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-            // System Prompt for "The Guide"
+            // System Prompt for "The Guide" (Updated for Syrian Army/Moral Guidance)
             const systemPrompt = `
-                أنت "المستشار الذكي" لمنصة "بوصلة" العسكرية التوعوية.
-                شخصيتك: ضابط مثقف، حكيم، هادئ، ومتزن.
-                مهمتك: الإجابة على أسئلة الجنود والضباط بخصوص التوجيه المعنوي، القيم العسكرية، الانضباط، والتعامل مع الشائعات.
-                أسلوبك: استخدم لغة عربية فصحى قوية ولكن مفهومة. كن مختصراً ومباشراً. ادعم إجاباتك بقيم الشجاعة والولاء.
-                تنسيق: استخدم Markdown لتنسيق النص (نقاط، عريض).
+                أنت "المستشار المعنوي" لمنصة "بوصلة" التابعة لهيئة التوجيه المعنوي في الجيش العربي السوري.
+                شخصيتك: ضابط توجيه مثقف، حكيم، يتحدث بروح وطنية عالية ومسؤولية.
+                مهمتك: الإجابة على أسئلة العسكريين بخصوص العقيدة القتالية، الصمود، الانضباط، والتاريخ العسكري السوري.
+                أسلوبك: استخدم لغة عربية قوية، عزز قيم الولاء للوطن، وكن مختصراً.
+                تحذير: لا تخض في تفاصيل العمليات العسكرية السرية أو المواقع. ركز على الجانب المعنوي والفكري.
+                تنسيق: استخدم Markdown.
             `;
 
             // Call API
             const aiResponse = await callGemini(userText, systemPrompt);
 
             // Remove Loading & Add Response
-            const loadingElement = document.getElementById(loadingId);
-            if(loadingElement) loadingElement.remove();
-            
+            document.getElementById(loadingId).remove();
             messagesDiv.innerHTML += `<div class="ai-message bot">${marked.parse(aiResponse)}</div>`;
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }
@@ -660,13 +714,12 @@
             resultDiv.innerHTML = "جاري الاتصال بقاعدة البيانات التحليلية...";
 
             const systemPrompt = `
-                أنت خبير في الحرب النفسية وتحليل الدعاية لمنصة "بوصلة".
-                مهمتك: تحليل النص المقدم (شائعة أو خبر) وتفكيكه.
+                أنت خبير في الحرب النفسية في هيئة التوجيه المعنوي.
+                مهمتك: تحليل النص المقدم (شائعة معادية أو خبر مشبوه) وتفكيكه.
                 خطوات التحليل:
-                1. حدد "الهدف" من هذا النص (تخويف، إحباط، فتنة).
-                2. حدد "المغالطات المنطقية" أو "أساليب التلاعب" (تعميم، استمالة عاطفية، عدم وجود مصدر).
-                3. قدم "الترياق" (نصيحة للجندي كيف يتعامل معه).
-                الإجابة يجب أن تكون منظمة جداً وقصيرة.
+                1. كشف الهدف من الشائعة (زعزعة الثقة، إثارة الفتنة، الخ).
+                2. تحديد المغالطات المنطقية.
+                3. تقديم "تحصين معنوي" للجندي (كيف يرد على هذه الشائعة بالحقائق والوعي).
             `;
 
             const aiResponse = await callGemini(input, systemPrompt);
@@ -691,10 +744,9 @@
             resultDiv.innerHTML = "جاري صياغة الومضة...";
 
             const systemPrompt = `
-                أنت كاتب محتوى مبدع في قسم التوجيه المعنوي.
-                مهمتك: كتابة "ومضة معنوية" (رسالة قصيرة جداً وملهمة) عن الموضوع الذي سيطلبه المستخدم.
-                الشروط: لا تزيد عن 30 كلمة. يجب أن تكون قوية، حماسية، وتصلح كرسالة SMS أو منشور سريع.
-                أضف هاشتاجات مناسبة في النهاية.
+                أنت ضابط توجيه معنوي متخصص في رفع الروح القتالية.
+                مهمتك: كتابة "ومضة معنوية" (رسالة قصيرة جداً) عن الموضوع المطلوب للجندي السوري.
+                الشروط: لا تزيد عن 30 كلمة. يجب أن تكون قوية، حماسية، وتصلح كرسالة تعميم أو تصميم جرافيك.
             `;
 
             const aiResponse = await callGemini(topic, systemPrompt);
